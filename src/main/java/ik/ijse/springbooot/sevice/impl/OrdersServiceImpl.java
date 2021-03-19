@@ -2,6 +2,8 @@ package ik.ijse.springbooot.sevice.impl;
 
 import ik.ijse.springbooot.dto.ItemDTO;
 import ik.ijse.springbooot.dto.OrdersDTO;
+import ik.ijse.springbooot.entity.Item;
+import ik.ijse.springbooot.entity.Orders;
 import ik.ijse.springbooot.repo.OrdersRepo;
 import ik.ijse.springbooot.sevice.OrdersService;
 import org.modelmapper.ModelMapper;
@@ -19,14 +21,19 @@ import java.util.List;
 @Transactional
 public class OrdersServiceImpl implements OrdersService {
     @Autowired
-    OrdersRepo orderRepo;
+    OrdersRepo repo;
 
     @Autowired
     ModelMapper mapper;
 
     @Override
     public void saveOrder(OrdersDTO dto) {
-
+        if (!repo.existsById(dto.getOrderID())){
+            Orders orders = mapper.map(dto, Orders.class);
+            repo.save(orders);
+        } else {
+            throw new RuntimeException("Customer already exist..!");
+        }
     }
 
     @Override
